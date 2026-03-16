@@ -1,924 +1,917 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>家庭个税优化计算器</title>
-    <style>
-        :root {
-            --bg-color: #f5f5f7;
-            --card-bg: #ffffff;
-            --text-primary: #1d1d1f;
-            --text-secondary: #86868b;
-            --accent-blue: #0071e3;
-            --accent-green: #30d158;
-            --accent-red: #ff3b30;
-            --input-bg: #f5f5f7;
-            --border-radius: 18px;
-            --input-radius: 12px;
-            --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
-            --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
-            --font-stack: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>家庭个税优化计算器</title>
+    <style>
+        :root {
+            --bg-color: #f5f5f7;
+            --card-bg: #ffffff;
+            --text-primary: #1d1d1f;
+            --text-secondary: #86868b;
+            --accent-blue: #0071e3;
+            --accent-green: #30d158;
+            --accent-red: #ff3b30;
+            --input-bg: #f5f5f7;
+            --border-radius: 18px;
+            --input-radius: 12px;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
+            --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
+            --font-stack: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
 
-        body {
-            font-family: var(--font-stack);
-            background-color: var(--bg-color);
-            color: var(--text-primary);
-            margin: 0;
-            padding: 40px 20px;
-            -webkit-font-smoothing: antialiased;
-            line-height: 1.5;
-        }
+        body {
+            font-family: var(--font-stack);
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 40px 20px;
+            -webkit-font-smoothing: antialiased;
+            line-height: 1.5;
+        }
 
-        .container {
-            max-width: 980px;
-            margin: 0 auto;
-        }
+        .container {
+            max-width: 980px;
+            margin: 0 auto;
+        }
 
-        /* Header */
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-        .header h1 {
-            font-size: 40px;
-            font-weight: 700;
-            margin: 0 0 10px 0;
-            letter-spacing: -0.003em;
-        }
-        .header p {
-            font-size: 19px;
-            color: var(--text-secondary);
-            font-weight: 400;
-            margin: 0;
-        }
-        .offline-badge {
-            display: inline-block;
-            background: #e8e8ed;
-            color: var(--text-secondary);
-            font-size: 12px;
-            font-weight: 600;
-            padding: 4px 10px;
-            border-radius: 20px;
-            margin-top: 10px;
-            vertical-align: middle;
-        }
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            font-size: 40px;
+            font-weight: 700;
+            margin: 0 0 10px 0;
+            letter-spacing: -0.003em;
+        }
+        .header p {
+            font-size: 19px;
+            color: var(--text-secondary);
+            font-weight: 400;
+            margin: 0;
+        }
+        /* Offline Badge Removed */
 
-        /* City Selector Pill */
-        .city-pill {
-            background: white;
-            padding: 8px 16px;
-            border-radius: 99px;
-            box-shadow: var(--shadow-sm);
-            display: inline-flex;
-            align-items: center;
-            margin-top: 20px;
-            transition: box-shadow 0.2s;
-        }
-        .city-pill:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        }
-        .city-label {
-            font-size: 14px;
-            color: var(--text-secondary);
-            margin-right: 8px;
-        }
-        .city-select {
-            border: none;
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--accent-blue);
-            background: transparent;
-            cursor: pointer;
-            outline: none;
-            padding-right: 4px;
-        }
+        /* City Selector Pill */
+        .city-pill {
+            background: white;
+            padding: 8px 16px;
+            border-radius: 99px;
+            box-shadow: var(--shadow-sm);
+            display: inline-flex;
+            align-items: center;
+            margin-top: 20px;
+            transition: box-shadow 0.2s;
+        }
+        .city-pill:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .city-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-right: 8px;
+        }
+        .city-select {
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent-blue);
+            background: transparent;
+            cursor: pointer;
+            outline: none;
+            padding-right: 4px;
+        }
 
-        /* Grid Layout */
-        .bento-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-        }
-        @media (min-width: 800px) {
-            .bento-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-            .span-full {
-                grid-column: span 2;
-            }
-        }
+        /* Grid Layout */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        @media (min-width: 800px) {
+            .bento-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .span-full {
+                grid-column: span 2;
+            }
+        }
 
-        /* Cards */
-        .card {
-            background: var(--card-bg);
-            border-radius: var(--border-radius);
-            padding: 30px;
-            box-shadow: var(--shadow-sm);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .card:hover {
-            box-shadow: var(--shadow-md);
-        }
-        
-        .card-title {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .icon-circle {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            font-weight: bold;
-            margin-right: 12px;
-        }
-        .icon-blue { background: #e0f0ff; color: var(--accent-blue); }
-        .icon-pink { background: #ffe0eb; color: #d6006e; }
-        .icon-green { background: #e0ffe4; color: var(--accent-green); }
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover {
+            box-shadow: var(--shadow-md);
+        }
+        
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .icon-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            margin-right: 12px;
+        }
+        .icon-blue { background: #e0f0ff; color: var(--accent-blue); }
+        .icon-pink { background: #ffe0eb; color: #d6006e; }
+        .icon-green { background: #e0ffe4; color: var(--accent-green); }
 
-        /* Inputs */
-        .input-group {
-            margin-bottom: 16px;
-        }
-        .label {
-            display: block;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.02em;
-        }
-        .input-wrapper {
-            position: relative;
-        }
-        .currency {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-secondary);
-            font-size: 15px;
-            pointer-events: none;
-        }
-        .input-field {
-            width: 100%;
-            background: var(--input-bg);
-            border: 1px solid transparent;
-            border-radius: var(--input-radius);
-            padding: 12px 12px 12px 30px;
-            font-size: 17px;
-            color: var(--text-primary);
-            box-sizing: border-box;
-            transition: all 0.2s;
-            font-family: var(--font-stack);
-        }
-        .input-field:focus {
-            background: white;
-            border-color: var(--accent-blue);
-            outline: none;
-        }
-        .input-field:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-        select.input-field {
-            padding-left: 12px;
-            appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2386868b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 12px center;
-            background-size: 16px;
-        }
+        /* Inputs */
+        .input-group {
+            margin-bottom: 16px;
+        }
+        .label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+        .input-wrapper {
+            position: relative;
+        }
+        .currency {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 15px;
+            pointer-events: none;
+        }
+        .input-field {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid transparent;
+            border-radius: var(--input-radius);
+            padding: 12px 12px 12px 30px;
+            font-size: 17px;
+            color: var(--text-primary);
+            box-sizing: border-box;
+            transition: all 0.2s;
+            font-family: var(--font-stack);
+        }
+        .input-field:focus {
+            background: white;
+            border-color: var(--accent-blue);
+            outline: none;
+        }
+        .input-field:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        select.input-field {
+            padding-left: 12px;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2386868b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+        }
 
-        /* Auto Calc Box */
-        .auto-calc-box {
-            background: var(--input-bg);
-            border-radius: var(--input-radius);
-            padding: 16px;
-            margin-bottom: 20px;
-        }
-        .toggle-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 12px;
-        }
-        .toggle-label {
-            font-size: 14px;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-        }
-        
-        /* Custom Switch */
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 42px;
-            height: 24px;
-            margin-right: 12px;
-        }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #d1d1d6;
-            transition: .3s;
-            border-radius: 24px;
-        }
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 20px;
-            width: 20px;
-            left: 2px;
-            bottom: 2px;
-            background-color: white;
-            transition: .3s;
-            border-radius: 50%;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-        input:checked + .slider {
-            background-color: var(--accent-green);
-        }
-        input:checked + .slider:before {
-            transform: translateX(18px);
-        }
+        /* Auto Calc Box */
+        .auto-calc-box {
+            background: var(--input-bg);
+            border-radius: var(--input-radius);
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .toggle-label {
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        /* Custom Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 42px;
+            height: 24px;
+            margin-right: 12px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #d1d1d6;
+            transition: .3s;
+            border-radius: 24px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        input:checked + .slider {
+            background-color: var(--accent-green);
+        }
+        input:checked + .slider:before {
+            transform: translateX(18px);
+        }
 
-        /* Mini Select */
-        .mini-select {
-            font-size: 12px;
-            padding: 4px 8px;
-            border-radius: 6px;
-            border: 1px solid #d1d1d6;
-            background: white;
-            color: var(--text-primary);
-        }
+        /* Mini Select */
+        .mini-select {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid #d1d1d6;
+            background: white;
+            color: var(--text-primary);
+        }
 
-        /* Result Section */
-        .result-card {
-            background: #1d1d1f; /* Apple Dark */
-            color: white;
-            border-radius: var(--border-radius);
-            padding: 40px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-        .result-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 30px;
-            margin-bottom: 40px;
-            position: relative;
-            z-index: 2;
-        }
-        .stat-item {
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            padding: 24px;
-            border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        .stat-label {
-            font-size: 13px;
-            font-weight: 600;
-            color: rgba(255,255,255,0.6);
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        .stat-val {
-            font-size: 36px;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            margin-bottom: 8px;
-        }
-        .stat-sub {
-            font-size: 13px;
-            color: rgba(255,255,255,0.8);
-        }
-        
-        .tag {
-            display: inline-block;
-            font-size: 11px;
-            font-weight: 700;
-            padding: 4px 8px;
-            border-radius: 6px;
-            margin-top: 8px;
-        }
-        .tag-green { background: rgba(48, 209, 88, 0.2); color: #30d158; }
-        .tag-red { background: rgba(255, 59, 48, 0.2); color: #ff453a; }
+        /* Result Section */
+        .result-card {
+            background: #1d1d1f; /* Apple Dark */
+            color: white;
+            border-radius: var(--border-radius);
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .result-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 2;
+        }
+        .stat-item {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 24px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .stat-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .stat-val {
+            font-size: 36px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 8px;
+        }
+        .stat-sub {
+            font-size: 13px;
+            color: rgba(255,255,255,0.8);
+        }
+        
+        .tag {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 6px;
+            margin-top: 8px;
+        }
+        .tag-green { background: rgba(48, 209, 88, 0.2); color: #30d158; }
+        .tag-red { background: rgba(255, 59, 48, 0.2); color: #ff453a; }
 
-        .rec-section {
-            background: white;
-            color: var(--text-primary);
-            border-radius: 20px;
-            padding: 30px;
-            text-align: left;
-        }
-        .rec-title {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-        }
-        .rec-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        .rec-item {
-            padding: 12px 0;
-            border-bottom: 1px solid #e5e5ea;
-            font-size: 15px;
-            display: flex;
-            align-items: flex-start;
-        }
-        .rec-item:last-child { border-bottom: none; }
-        .check {
-            color: var(--accent-green);
-            margin-right: 12px;
-            font-weight: bold;
-            font-size: 18px;
-        }
+        .rec-section {
+            background: white;
+            color: var(--text-primary);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: left;
+        }
+        .rec-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        .rec-subtitle {
+            font-size: 12px;
+            font-weight: 400;
+            color: #86868b;
+            margin-left: 8px;
+            margin-top: 2px;
+        }
+        .rec-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .rec-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #e5e5ea;
+            font-size: 15px;
+            display: flex;
+            align-items: flex-start;
+        }
+        .rec-item:last-child { border-bottom: none; }
+        .check {
+            color: var(--accent-green);
+            margin-right: 12px;
+            font-weight: bold;
+            font-size: 18px;
+        }
 
-        /* Checkbox list styles */
-        .checkbox-group {
-            display: flex;
-            gap: 20px;
-        }
-        .custom-checkbox {
-            display: flex;
-            align-items: center;
-            font-size: 14px;
-            cursor: pointer;
-        }
-        .custom-checkbox input {
-            margin-right: 8px;
-            accent-color: var(--accent-blue);
-            width: 16px; height: 16px;
-        }
+        /* Checkbox list styles */
+        .checkbox-group {
+            display: flex;
+            gap: 20px;
+        }
+        .custom-checkbox {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .custom-checkbox input {
+            margin-right: 8px;
+            accent-color: var(--accent-blue);
+            width: 16px; height: 16px;
+        }
 
-    </style>
+    </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header">
-        <h1>家庭个税优化计算器</h1>
-        <p>Pro 版离线计算工具</p>
-        
-        <div class="city-pill">
-            <span class="city-label">社保基数城市:</span>
-            <select id="citySelect" class="city-select">
-                <option value="shanghai">上海 Shanghai</option>
-                <option value="beijing">北京 Beijing</option>
-                <option value="shenzhen">深圳 Shenzhen</option>
-                <option value="guangzhou">广州 Guangzhou</option>
-            </select>
-        </div>
-        <div><span class="offline-badge">无需联网 · 本地运行</span></div>
-    </div>
+    <div class="header">
+        <h1>家庭个税优化计算器</h1>
+        <p>Pro 版个税计算工具</p>
+        
+        <div class="city-pill">
+            <span class="city-label">社保基数城市:</span>
+            <select id="citySelect" class="city-select">
+                <option value="shanghai">上海 Shanghai</option>
+                <option value="beijing">北京 Beijing</option>
+                <option value="shenzhen">深圳 Shenzhen</option>
+                <option value="guangzhou">广州 Guangzhou</option>
+            </select>
+        </div>
+    </div>
 
-    <div class="bento-grid">
-        <!-- Person A -->
-        <div class="card">
-            <div class="card-title">
-                <div style="display:flex;align-items:center;">
-                    <div class="icon-circle icon-blue">A</div>
-                    配偶 A (丈夫)
-                </div>
-            </div>
-            
-            <div class="bento-grid" style="gap:15px; margin-bottom:20px;">
-                <div class="input-group" style="margin:0;">
-                    <label class="label">税前月薪</label>
-                    <div class="input-wrapper"><span class="currency">¥</span><input type="number" id="salaryA" class="input-field" value="15000"></div>
-                </div>
-                <div class="input-group" style="margin:0;">
-                    <label class="label">年终奖金</label>
-                    <div class="input-wrapper"><span class="currency">¥</span><input type="number" id="bonusA" class="input-field" value="20000"></div>
-                </div>
-            </div>
+    <div class="bento-grid">
+        <!-- Person A -->
+        <div class="card">
+            <div class="card-title">
+                <div style="display:flex;align-items:center;">
+                    <div class="icon-circle icon-blue">A</div>
+                    配偶 A 
+                </div>
+            </div>
+            
+            <div class="bento-grid" style="gap:15px; margin-bottom:20px;">
+                <div class="input-group" style="margin:0;">
+                    <label class="label">税前月薪</label>
+                    <div class="input-wrapper"><span class="currency">¥</span><input type="number" id="salaryA" class="input-field" value="15000"></div>
+                </div>
+                <div class="input-group" style="margin:0;">
+                    <label class="label">年终奖金</label>
+                    <div class="input-wrapper"><span class="currency">¥</span><input type="number" id="bonusA" class="input-field" value="20000"></div>
+                </div>
+            </div>
 
-            <!-- Auto Calc Area -->
-            <div class="auto-calc-box">
-                <div class="toggle-row">
-                    <label class="toggle-label">
-                        <div class="switch"><input type="checkbox" id="autoInsA" checked><span class="slider"></span></div>
-                        自动核算社保
-                    </label>
-                    <select id="fundRateA" class="mini-select">
-                        <option value="0.05">公积金 5%</option>
-                        <option value="0.07" selected>公积金 7%</option>
-                        <option value="0.10">公积金 10%</option>
-                        <option value="0.12">公积金 12%</option>
-                    </select>
-                </div>
-                <div class="input-wrapper">
-                    <span class="currency">¥</span>
-                    <input type="number" id="insuranceA" class="input-field" disabled style="background:white;">
-                </div>
-                <div style="font-size:10px; color:var(--text-secondary); margin-top:6px;">* 根据城市基数自动计算年扣除总额</div>
-            </div>
+            <!-- Auto Calc Area -->
+            <div class="auto-calc-box">
+                <div class="toggle-row">
+                    <label class="toggle-label">
+                        <div class="switch"><input type="checkbox" id="autoInsA" checked><span class="slider"></span></div>
+                        自动核算社保
+                    </label>
+                    <select id="fundRateA" class="mini-select">
+                        <option value="0.05">公积金 5%</option>
+                        <option value="0.07" selected>公积金 7%</option>
+                        <option value="0.10">公积金 10%</option>
+                        <option value="0.12">公积金 12%</option>
+                    </select>
+                </div>
+                <div class="input-wrapper">
+                    <span class="currency">¥</span>
+                    <input type="number" id="insuranceA" class="input-field" disabled style="background:white;">
+                </div>
+                <div style="font-size:10px; color:var(--text-secondary); margin-top:6px;">* 根据城市基数自动计算年扣除总额</div>
+            </div>
 
-            <div class="bento-grid" style="gap:15px; margin-bottom:20px;">
-                <div class="input-group" style="margin:0;">
-                    <label class="label">赡养老人 (月扣除)</label>
-                    <select id="elderlyA" class="input-field">
-                        <option value="0">无</option>
-                        <option value="1000">¥1000 (非独生)</option>
-                        <option value="2000">¥2000 (独生)</option>
-                        <option value="3000">¥3000 (新标)</option>
-                    </select>
-                </div>
-                <div class="input-group" style="margin:0;">
-                    <label class="label">个人养老金 (年)</label>
-                    <div class="input-wrapper"><span class="currency">¥</span><input type="number" id="pensionA" class="input-field" placeholder="0"></div>
-                </div>
-            </div>
+            <div class="bento-grid" style="gap:15px; margin-bottom:20px;">
+                <div class="input-group" style="margin:0;">
+                    <label class="label">赡养老人 (月扣除)</label>
+                    <select id="elderlyA" class="input-field">
+                        <option value="0">无</option>
+                        <option value="1000">¥1000 (非独生)</option>
+                        <option value="2000">¥2000 (独生)</option>
+                        <option value="3000">¥3000 (新标)</option>
+                    </select>
+                </div>
+                <div class="input-group" style="margin:0;">
+                    <label class="label">个人养老金 (年)</label>
+                    <div class="input-wrapper"><span class="currency">¥</span><input type="number" id="pensionA" class="input-field" placeholder="0"></div>
+                </div>
+            </div>
 
-            <div class="input-group">
-                <label class="label">继续教育</label>
-                <div class="checkbox-group">
-                    <label class="custom-checkbox"><input type="checkbox" id="eduDegreeA"> 学历教育</label>
-                    <label class="custom-checkbox"><input type="checkbox" id="eduCertA"> 职业证书</label>
-                </div>
-            </div>
+            <div class="input-group">
+                <label class="label">继续教育</label>
+                <div class="checkbox-group">
+                    <label class="custom-checkbox"><input type="checkbox" id="eduDegreeA"> 学历教育</label>
+                    <label class="custom-checkbox"><input type="checkbox" id="eduCertA"> 职业证书</label>
+                </div>
+            </div>
 
-            <div class="auto-calc-box" style="margin-top:20px; margin-bottom:0;">
-                <div class="toggle-row" style="margin-bottom:8px;">
-                    <label class="toggle-label">
-                        <div class="switch"><input type="checkbox" id="autoPrepaidA" checked><span class="slider"></span></div>
-                        自动核算预缴税
-                    </label>
-                </div>
-                <div class="input-wrapper">
-                    <span class="currency">¥</span>
-                    <input type="number" id="prepaidA" class="input-field" disabled style="background:white;">
-                </div>
-                <div style="font-size:10px; color:var(--text-secondary); margin-top:6px;">
-                    * 逻辑：工资 + 奖金单独计税 - 仅基础扣除 (不含赡养老人/教育/养老金等专项)
-                </div>
-            </div>
-        </div>
+            <div class="auto-calc-box" style="margin-top:20px; margin-bottom:0;">
+                <div class="toggle-row" style="margin-bottom:8px;">
+                    <label class="toggle-label">
+                        <div class="switch"><input type="checkbox" id="autoPrepaidA" checked><span class="slider"></span></div>
+                        自动核算预缴税
+                    </label>
+                </div>
+                <div class="input-wrapper">
+                    <span class="currency">¥</span>
+                    <input type="number" id="prepaidA" class="input-field" disabled style="background:white;">
+                </div>
+                <div style="font-size:10px; color:var(--text-secondary); margin-top:6px;">
+                    * 逻辑：工资 + 奖金单独计税 - 仅基础扣除 (不含赡养老人/教育/养老金等专项)
+                </div>
+            </div>
+        </div>
 
-        <!-- Person B -->
-        <div class="card">
-            <div class="card-title">
-                <div style="display:flex;align-items:center;">
-                    <div class="icon-circle icon-pink">B</div>
-                    配偶 B (妻子)
-                </div>
-            </div>
-            
-            <div class="bento-grid" style="gap:15px; margin-bottom:20px;">
-                <div class="input-group" style="margin:0;">
-                    <label class="label">税前月薪</label>
-                    <div class="input-wrapper"><span class="currency">¥</span><input type="number" id="salaryB" class="input-field" value="15000"></div>
-                </div>
-                <div class="input-group" style="margin:0;">
-                    <label class="label">年终奖金</label>
-                    <div class="input-wrapper"><span class="currency">¥</span><input type="number" id="bonusB" class="input-field" value="20000"></div>
-                </div>
-            </div>
+        <!-- Person B -->
+        <div class="card">
+            <div class="card-title">
+                <div style="display:flex;align-items:center;">
+                    <div class="icon-circle icon-pink">B</div>
+                    配偶 B
+                </div>
+            </div>
+            
+            <div class="bento-grid" style="gap:15px; margin-bottom:20px;">
+                <div class="input-group" style="margin:0;">
+                    <label class="label">税前月薪</label>
+                    <div class="input-wrapper"><span class="currency">¥</span><input type="number" id="salaryB" class="input-field" value="15000"></div>
+                </div>
+                <div class="input-group" style="margin:0;">
+                    <label class="label">年终奖金</label>
+                    <div class="input-wrapper"><span class="currency">¥</span><input type="number" id="bonusB" class="input-field" value="20000"></div>
+                </div>
+            </div>
 
-            <!-- Auto Calc Area -->
-            <div class="auto-calc-box">
-                <div class="toggle-row">
-                    <label class="toggle-label">
-                        <div class="switch"><input type="checkbox" id="autoInsB" checked><span class="slider"></span></div>
-                        自动核算社保
-                    </label>
-                    <select id="fundRateB" class="mini-select">
-                        <option value="0.05">公积金 5%</option>
-                        <option value="0.07" selected>公积金 7%</option>
-                        <option value="0.10">公积金 10%</option>
-                        <option value="0.12">公积金 12%</option>
-                    </select>
-                </div>
-                <div class="input-wrapper">
-                    <span class="currency">¥</span>
-                    <input type="number" id="insuranceB" class="input-field" disabled style="background:white;">
-                </div>
-                <div style="font-size:10px; color:var(--text-secondary); margin-top:6px;">* 根据城市基数自动计算年扣除总额</div>
-            </div>
+            <!-- Auto Calc Area -->
+            <div class="auto-calc-box">
+                <div class="toggle-row">
+                    <label class="toggle-label">
+                        <div class="switch"><input type="checkbox" id="autoInsB" checked><span class="slider"></span></div>
+                        自动核算社保
+                    </label>
+                    <select id="fundRateB" class="mini-select">
+                        <option value="0.05">公积金 5%</option>
+                        <option value="0.07" selected>公积金 7%</option>
+                        <option value="0.10">公积金 10%</option>
+                        <option value="0.12">公积金 12%</option>
+                    </select>
+                </div>
+                <div class="input-wrapper">
+                    <span class="currency">¥</span>
+                    <input type="number" id="insuranceB" class="input-field" disabled style="background:white;">
+                </div>
+                <div style="font-size:10px; color:var(--text-secondary); margin-top:6px;">* 根据城市基数自动计算年扣除总额</div>
+            </div>
 
-            <div class="bento-grid" style="gap:15px; margin-bottom:20px;">
-                <div class="input-group" style="margin:0;">
-                    <label class="label">赡养老人 (月扣除)</label>
-                    <select id="elderlyB" class="input-field">
-                        <option value="0">无</option>
-                        <option value="1000">¥1000 (非独生)</option>
-                        <option value="2000">¥2000 (独生)</option>
-                        <option value="3000">¥3000 (新标)</option>
-                    </select>
-                </div>
-                <div class="input-group" style="margin:0;">
-                    <label class="label">个人养老金 (年)</label>
-                    <div class="input-wrapper"><span class="currency">¥</span><input type="number" id="pensionB" class="input-field" placeholder="0"></div>
-                </div>
-            </div>
+            <div class="bento-grid" style="gap:15px; margin-bottom:20px;">
+                <div class="input-group" style="margin:0;">
+                    <label class="label">赡养老人 (月扣除)</label>
+                    <select id="elderlyB" class="input-field">
+                        <option value="0">无</option>
+                        <option value="1000">¥1000 (非独生)</option>
+                        <option value="2000">¥2000 (独生)</option>
+                        <option value="3000">¥3000 (新标)</option>
+                    </select>
+                </div>
+                <div class="input-group" style="margin:0;">
+                    <label class="label">个人养老金 (年)</label>
+                    <div class="input-wrapper"><span class="currency">¥</span><input type="number" id="pensionB" class="input-field" placeholder="0"></div>
+                </div>
+            </div>
 
-            <div class="input-group">
-                <label class="label">继续教育</label>
-                <div class="checkbox-group">
-                    <label class="custom-checkbox"><input type="checkbox" id="eduDegreeB"> 学历教育</label>
-                    <label class="custom-checkbox"><input type="checkbox" id="eduCertB"> 职业证书</label>
-                </div>
-            </div>
+            <div class="input-group">
+                <label class="label">继续教育</label>
+                <div class="checkbox-group">
+                    <label class="custom-checkbox"><input type="checkbox" id="eduDegreeB"> 学历教育</label>
+                    <label class="custom-checkbox"><input type="checkbox" id="eduCertB"> 职业证书</label>
+                </div>
+            </div>
 
-            <div class="auto-calc-box" style="margin-top:20px; margin-bottom:0;">
-                <div class="toggle-row" style="margin-bottom:8px;">
-                    <label class="toggle-label">
-                        <div class="switch"><input type="checkbox" id="autoPrepaidB" checked><span class="slider"></span></div>
-                        自动核算预缴税
-                    </label>
-                </div>
-                <div class="input-wrapper">
-                    <span class="currency">¥</span>
-                    <input type="number" id="prepaidB" class="input-field" disabled style="background:white;">
-                </div>
-                <div style="font-size:10px; color:var(--text-secondary); margin-top:6px;">
-                    * 逻辑：工资 + 奖金单独计税 - 仅基础扣除 (不含赡养老人/教育/养老金等专项)
-                </div>
-            </div>
-        </div>
+            <div class="auto-calc-box" style="margin-top:20px; margin-bottom:0;">
+                <div class="toggle-row" style="margin-bottom:8px;">
+                    <label class="toggle-label">
+                        <div class="switch"><input type="checkbox" id="autoPrepaidB" checked><span class="slider"></span></div>
+                        自动核算预缴税
+                    </label>
+                </div>
+                <div class="input-wrapper">
+                    <span class="currency">¥</span>
+                    <input type="number" id="prepaidB" class="input-field" disabled style="background:white;">
+                </div>
+                <div style="font-size:10px; color:var(--text-secondary); margin-top:6px;">
+                    * 逻辑：工资 + 奖金单独计税 - 仅基础扣除 (不含赡养老人/教育/养老金等专项)
+                </div>
+            </div>
+        </div>
 
-        <!-- Shared Section -->
-        <div class="card span-full">
-            <div class="card-title">
-                <div style="display:flex;align-items:center;">
-                    <div class="icon-circle icon-green">H</div>
-                    家庭共享扣除
-                </div>
-            </div>
-            <div class="bento-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:20px;">
-                <div class="input-group" style="margin:0;">
-                    <label class="label">子女教育 (3岁+)</label>
-                    <select id="childEdu" class="input-field">
-                        <option value="0">0人</option>
-                        <option value="1">1人</option>
-                        <option value="2">2人</option>
-                        <option value="3">3人</option>
-                    </select>
-                </div>
-                <div class="input-group" style="margin:0;">
-                    <label class="label">婴幼儿照护 (3岁-)</label>
-                    <select id="infantEdu" class="input-field">
-                        <option value="0">0人</option>
-                        <option value="1">1人</option>
-                        <option value="2">2人</option>
-                    </select>
-                </div>
-                <div class="input-group" style="margin:0;">
-                    <label class="label">首套房贷利息</label>
-                    <select id="hasLoan" class="input-field">
-                        <option value="0">无</option>
-                        <option value="1">有 (¥1000/月)</option>
-                    </select>
-                </div>
-                <div class="input-group" style="margin:0;">
-                    <label class="label">住房租金 (无房贷)</label>
-                    <select id="rentCity" class="input-field">
-                        <option value="0">无</option>
-                        <option value="1500">省会/直辖 (1500)</option>
-                        <option value="1100">大城市 (1100)</option>
-                        <option value="800">中小城市 (800)</option>
-                    </select>
-                </div>
-            </div>
-            
-            <div style="margin-top:24px; padding-top:24px; border-top:1px solid #e5e5ea;">
-                 <label class="label">大病医疗 (年度自付 > 1.5万的部分)</label>
-                 <div class="bento-grid">
-                     <div class="input-wrapper"><span class="currency">A</span><input type="number" id="diseaseA" class="input-field" placeholder="A 的金额"></div>
-                     <div class="input-wrapper"><span class="currency">B</span><input type="number" id="diseaseB" class="input-field" placeholder="B 的金额"></div>
-                 </div>
-            </div>
-        </div>
-        
-        <!-- Result Section -->
-        <div class="result-card span-full">
-            <div id="loading" style="display:none; color:gray;">计算最优方案中...</div>
-            
-            <div id="results">
-                <div class="result-stats">
-                    <div class="stat-item">
-                        <div class="stat-label">家庭总税负 (最优)</div>
-                        <div class="stat-val" id="resTotal" style="color:var(--accent-green);">¥0</div>
-                        <div class="stat-sub">比错误申报节省 <span id="resSave" style="color:white; font-weight:700;">¥0</span></div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">A 最终纳税</div>
-                        <div class="stat-val" id="resTaxA">¥0</div>
-                        <div class="stat-sub" id="resModeA">...</div>
-                        <div id="refundTagA"></div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">B 最终纳税</div>
-                        <div class="stat-val" id="resTaxB">¥0</div>
-                        <div class="stat-sub" id="resModeB">...</div>
-                        <div id="refundTagB"></div>
-                    </div>
-                </div>
+        <!-- Shared Section -->
+        <div class="card span-full">
+            <div class="card-title">
+                <div style="display:flex;align-items:center;">
+                    <div class="icon-circle icon-green">H</div>
+                    家庭共享扣除
+                </div>
+            </div>
+            <div class="bento-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:20px;">
+                <div class="input-group" style="margin:0;">
+                    <label class="label">子女教育 (3岁+)</label>
+                    <select id="childEdu" class="input-field">
+                        <option value="0">0人</option>
+                        <option value="1">1人</option>
+                        <option value="2">2人</option>
+                        <option value="3">3人</option>
+                    </select>
+                </div>
+                <div class="input-group" style="margin:0;">
+                    <label class="label">婴幼儿照护 (3岁-)</label>
+                    <select id="infantEdu" class="input-field">
+                        <option value="0">0人</option>
+                        <option value="1">1人</option>
+                        <option value="2">2人</option>
+                    </select>
+                </div>
+                <div class="input-group" style="margin:0;">
+                    <label class="label">首套房贷利息</label>
+                    <select id="hasLoan" class="input-field">
+                        <option value="0">无</option>
+                        <option value="1">有 (¥1000/月)</option>
+                    </select>
+                </div>
+                <div class="input-group" style="margin:0;">
+                    <label class="label">住房租金 (无房贷)</label>
+                    <select id="rentCity" class="input-field">
+                        <option value="0">无</option>
+                        <option value="1500">省会/直辖 (1500)</option>
+                        <option value="1100">大城市 (1100)</option>
+                        <option value="800">中小城市 (800)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div style="margin-top:24px; padding-top:24px; border-top:1px solid #e5e5ea;">
+                 <label class="label">大病医疗 (年度自付 > 1.5万的部分)</label>
+                 <div class="bento-grid">
+                     <div class="input-wrapper"><span class="currency">A</span><input type="number" id="diseaseA" class="input-field" placeholder="A 的金额"></div>
+                     <div class="input-wrapper"><span class="currency">B</span><input type="number" id="diseaseB" class="input-field" placeholder="B 的金额"></div>
+                 </div>
+            </div>
+        </div>
+        
+        <!-- Result Section -->
+        <div class="result-card span-full">
+            <div id="loading" style="display:none; color:gray;">计算最优方案中...</div>
+            
+            <div id="results">
+                <div class="result-stats">
+                    <div class="stat-item">
+                        <div class="stat-label">家庭总税负 (最优)</div>
+                        <div class="stat-val" id="resTotal" style="color:var(--accent-green);">¥0</div>
+                        <div class="stat-sub">比错误申报节省 <span id="resSave" style="color:white; font-weight:700;">¥0</span></div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">A 最终纳税</div>
+                        <div class="stat-val" id="resTaxA">¥0</div>
+                        <div class="stat-sub" id="resModeA">...</div>
+                        <div id="refundTagA"></div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">B 最终纳税</div>
+                        <div class="stat-val" id="resTaxB">¥0</div>
+                        <div class="stat-sub" id="resModeB">...</div>
+                        <div id="refundTagB"></div>
+                    </div>
+                </div>
 
-                <div class="rec-section">
-                    <div class="rec-title">
-                        <span style="font-size:24px; margin-right:10px;">💡</span> 推荐分配方案
-                    </div>
-                    <ul class="rec-list" id="recList">
-                        <!-- Content -->
-                    </ul>
-                </div>
-            </div>
-        </div>
+                <div class="rec-section">
+                    <div class="rec-title">
+                        <span style="font-size:24px; margin-right:10px;">💡</span> 推荐分配方案 
+                        <span class="rec-subtitle">(仅做参考)</span>
+                    </div>
+                    <ul class="rec-list" id="recList">
+                        <!-- Content -->
+                    </ul>
+                </div>
+            </div>
+        </div>
 
-    </div>
+    </div>
 </div>
 
 <script>
 // Logic remains identical, just binding to new IDs
 const cityData = {
-    shanghai: { baseMax: 36921, baseMin: 7384, rates: { pension: 0.08, med: 0.02, unemp: 0.005 } },
-    beijing:  { baseMax: 35283, baseMin: 6326, rates: { pension: 0.08, med: 0.02, unemp: 0.005 } },
-    shenzhen: { baseMax: 26421, baseMin: 3523, rates: { pension: 0.08, med: 0.02, unemp: 0.003 } },
-    guangzhou:{ baseMax: 26421, baseMin: 5284, rates: { pension: 0.08, med: 0.02, unemp: 0.002 } }
+    shanghai: { baseMax: 36921, baseMin: 7384, rates: { pension: 0.08, med: 0.02, unemp: 0.005 } },
+    beijing:  { baseMax: 35283, baseMin: 6326, rates: { pension: 0.08, med: 0.02, unemp: 0.005 } },
+    shenzhen: { baseMax: 26421, baseMin: 3523, rates: { pension: 0.08, med: 0.02, unemp: 0.003 } },
+    guangzhou:{ baseMax: 26421, baseMin: 5284, rates: { pension: 0.08, med: 0.02, unemp: 0.002 } }
 };
 
 const brackets = [
-    { limit: 36000, rate: 0.03, quick: 0 },
-    { limit: 144000, rate: 0.10, quick: 2520 },
-    { limit: 300000, rate: 0.20, quick: 16920 },
-    { limit: 420000, rate: 0.25, quick: 31920 },
-    { limit: 660000, rate: 0.30, quick: 52920 },
-    { limit: 960000, rate: 0.35, quick: 85920 },
-    { limit: Infinity, rate: 0.45, quick: 181920 }
+    { limit: 36000, rate: 0.03, quick: 0 },
+    { limit: 144000, rate: 0.10, quick: 2520 },
+    { limit: 300000, rate: 0.20, quick: 16920 },
+    { limit: 420000, rate: 0.25, quick: 31920 },
+    { limit: 660000, rate: 0.30, quick: 52920 },
+    { limit: 960000, rate: 0.35, quick: 85920 },
+    { limit: Infinity, rate: 0.45, quick: 181920 }
 ];
 
 function getVal(id) { 
-    const el = document.getElementById(id);
-    return el.type === 'checkbox' ? el.checked : Number(el.value);
+    const el = document.getElementById(id);
+    return el.type === 'checkbox' ? el.checked : Number(el.value);
 }
 function setVal(id, val) { document.getElementById(id).value = val; }
 function fmt(num) { return num.toLocaleString('zh-CN', { maximumFractionDigits: 0 }); }
 
 function calcInsurance(salary, city, fundRate) {
-    const c = cityData[city];
-    const base = Math.min(c.baseMax, Math.max(c.baseMin, salary));
-    const monthly = base * (c.rates.pension + c.rates.med + c.rates.unemp);
-    const fund = Math.min(c.baseMax, salary) * fundRate; 
-    return Math.round((monthly + fund) * 12);
+    const c = cityData[city];
+    const base = Math.min(c.baseMax, Math.max(c.baseMin, salary));
+    const monthly = base * (c.rates.pension + c.rates.med + c.rates.unemp);
+    const fund = Math.min(c.baseMax, salary) * fundRate; 
+    return Math.round((monthly + fund) * 12);
 }
 
 function calcTax(taxable) {
-    if (taxable <= 0) return { tax: 0, rate: 0 };
-    for (let b of brackets) {
-        if (taxable <= b.limit) return { tax: taxable * b.rate - b.quick, rate: b.rate * 100 };
-    }
-    return { tax: 0, rate: 0 };
+    if (taxable <= 0) return { tax: 0, rate: 0 };
+    for (let b of brackets) {
+        if (taxable <= b.limit) return { tax: taxable * b.rate - b.quick, rate: b.rate * 100 };
+    }
+    return { tax: 0, rate: 0 };
 }
 
 function calcBonusTax(bonus) {
-    if (bonus <= 0) return { tax: 0, rate: 0 };
-    const monthly = bonus / 12;
-    let rate = 0.03, quick = 0;
-    if (monthly <= 3000) { rate = 0.03; quick = 0; }
-    else if (monthly <= 12000) { rate = 0.10; quick = 210; }
-    else if (monthly <= 25000) { rate = 0.20; quick = 1410; }
-    else if (monthly <= 35000) { rate = 0.25; quick = 2660; }
-    else if (monthly <= 55000) { rate = 0.30; quick = 4410; }
-    else if (monthly <= 80000) { rate = 0.35; quick = 7160; }
-    else { rate = 0.45; quick = 15160; }
-    return { tax: bonus * rate - quick, rate: rate * 100 };
+    if (bonus <= 0) return { tax: 0, rate: 0 };
+    const monthly = bonus / 12;
+    let rate = 0.03, quick = 0;
+    if (monthly <= 3000) { rate = 0.03; quick = 0; }
+    else if (monthly <= 12000) { rate = 0.10; quick = 210; }
+    else if (monthly <= 25000) { rate = 0.20; quick = 1410; }
+    else if (monthly <= 35000) { rate = 0.25; quick = 2660; }
+    else if (monthly <= 55000) { rate = 0.30; quick = 4410; }
+    else if (monthly <= 80000) { rate = 0.35; quick = 7160; }
+    else { rate = 0.45; quick = 15160; }
+    return { tax: bonus * rate - quick, rate: rate * 100 };
 }
 
 // Fixed: Only standard deduction (60000) and insurance
 function calcPrepaidTax(salary, bonus, insurance) {
-    // 60000 is standard yearly deduction
-    const taxableSalary = Math.max(0, (salary * 12) - insurance - 60000);
-    const salaryTax = calcTax(taxableSalary).tax;
-    const bonusTax = calcBonusTax(bonus).tax;
-    return salaryTax + bonusTax;
+    // 60000 is standard yearly deduction
+    const taxableSalary = Math.max(0, (salary * 12) - insurance - 60000);
+    const salaryTax = calcTax(taxableSalary).tax;
+    const bonusTax = calcBonusTax(bonus).tax;
+    return salaryTax + bonusTax;
 }
 
 function updateInsuranceUI() {
-    const city = document.getElementById('citySelect').value;
-    
-    if(getVal('autoInsA')) {
-        const ins = calcInsurance(getVal('salaryA'), city, getVal('fundRateA'));
-        setVal('insuranceA', ins);
-    } else {
-        document.getElementById('insuranceA').disabled = false;
-        document.getElementById('insuranceA').style.background = 'white';
-    }
+    const city = document.getElementById('citySelect').value;
+    
+    if(getVal('autoInsA')) {
+        const ins = calcInsurance(getVal('salaryA'), city, getVal('fundRateA'));
+        setVal('insuranceA', ins);
+    } else {
+        document.getElementById('insuranceA').disabled = false;
+        document.getElementById('insuranceA').style.background = 'white';
+    }
 
-    if(getVal('autoInsB')) {
-        const ins = calcInsurance(getVal('salaryB'), city, getVal('fundRateB'));
-        setVal('insuranceB', ins);
-    } else {
-        document.getElementById('insuranceB').disabled = false;
-        document.getElementById('insuranceB').style.background = 'white';
-    }
+    if(getVal('autoInsB')) {
+        const ins = calcInsurance(getVal('salaryB'), city, getVal('fundRateB'));
+        setVal('insuranceB', ins);
+    } else {
+        document.getElementById('insuranceB').disabled = false;
+        document.getElementById('insuranceB').style.background = 'white';
+    }
 }
 
 function runOptimization() {
-    updateInsuranceUI();
+    updateInsuranceUI();
 
-    const pA = {
-        salaryMonthly: getVal('salaryA'),
-        salary: getVal('salaryA') * 12,
-        bonus: getVal('bonusA'),
-        ins: getVal('insuranceA'),
-        // Full Deductions for Final Calc
-        finalDeduct: (getVal('elderlyA')*12) + (getVal('eduDegreeA')?4800:0) + (getVal('eduCertA')?3600:0) + Math.min(12000, getVal('pensionA'))
-    };
-    const pB = {
-        salaryMonthly: getVal('salaryB'),
-        salary: getVal('salaryB') * 12,
-        bonus: getVal('bonusB'),
-        ins: getVal('insuranceB'),
-        // Full Deductions for Final Calc
-        finalDeduct: (getVal('elderlyB')*12) + (getVal('eduDegreeB')?4800:0) + (getVal('eduCertB')?3600:0) + Math.min(12000, getVal('pensionB'))
-    };
+    const pA = {
+        salaryMonthly: getVal('salaryA'),
+        salary: getVal('salaryA') * 12,
+        bonus: getVal('bonusA'),
+        ins: getVal('insuranceA'),
+        fixedDeduct: (getVal('elderlyA')*12) + (getVal('eduDegreeA')?4800:0) + (getVal('eduCertA')?3600:0) + Math.min(12000, getVal('pensionA'))
+    };
+    const pB = {
+        salaryMonthly: getVal('salaryB'),
+        salary: getVal('salaryB') * 12,
+        bonus: getVal('bonusB'),
+        ins: getVal('insuranceB'),
+        fixedDeduct: (getVal('elderlyB')*12) + (getVal('eduDegreeB')?4800:0) + (getVal('eduCertB')?3600:0) + Math.min(12000, getVal('pensionB'))
+    };
 
-    // Prepaid Calc: NOW IGNORES FIXED DEDUCTIONS (Elderly, Edu, Pension)
-    // Only Income - Insurance - 60000
-    if(getVal('autoPrepaidA')) {
-        const preA = calcPrepaidTax(pA.salaryMonthly, pA.bonus, pA.ins);
-        setVal('prepaidA', Math.round(preA));
-        document.getElementById('prepaidA').disabled = true;
-    } else {
-        document.getElementById('prepaidA').disabled = false;
-    }
+    if(getVal('autoPrepaidA')) {
+        const preA = calcPrepaidTax(pA.salaryMonthly, pA.bonus, pA.ins);
+        setVal('prepaidA', Math.round(preA));
+        document.getElementById('prepaidA').disabled = true;
+    } else {
+        document.getElementById('prepaidA').disabled = false;
+    }
 
-    if(getVal('autoPrepaidB')) {
-        const preB = calcPrepaidTax(pB.salaryMonthly, pB.bonus, pB.ins);
-        setVal('prepaidB', Math.round(preB));
-        document.getElementById('prepaidB').disabled = true;
-    } else {
-        document.getElementById('prepaidB').disabled = false;
-    }
+    if(getVal('autoPrepaidB')) {
+        const preB = calcPrepaidTax(pB.salaryMonthly, pB.bonus, pB.ins);
+        setVal('prepaidB', Math.round(preB));
+        document.getElementById('prepaidB').disabled = true;
+    } else {
+        document.getElementById('prepaidB').disabled = false;
+    }
 
-    const shared = {
-        childTotal: (getVal('childEdu') + getVal('infantEdu')) * 2000 * 12,
-        childUnits: (getVal('childEdu') + getVal('infantEdu')) * 2,
-        loan: getVal('hasLoan') === 1,
-        rent: getVal('rentCity') * 12,
-        disA: Math.min(80000, Math.max(0, getVal('diseaseA') - 15000)),
-        disB: Math.min(80000, Math.max(0, getVal('diseaseB') - 15000))
-    };
+    const shared = {
+        childTotal: (getVal('childEdu') + getVal('infantEdu')) * 2000 * 12,
+        childUnits: (getVal('childEdu') + getVal('infantEdu')) * 2,
+        loan: getVal('hasLoan') === 1,
+        rent: getVal('rentCity') * 12,
+        disA: Math.min(80000, Math.max(0, getVal('diseaseA') - 15000)),
+        disB: Math.min(80000, Math.max(0, getVal('diseaseB') - 15000))
+    };
 
-    let best = { tax: Infinity, recs: [] };
-    let worstTax = 0;
+    let best = { tax: Infinity, recs: [] };
+    let worstTax = 0;
 
-    const childSteps = [];
-    for(let i=0; i<=shared.childUnits; i++) childSteps.push(i * 12000);
+    const childSteps = [];
+    for(let i=0; i<=shared.childUnits; i++) childSteps.push(i * 12000);
 
-    const housingOpts = shared.loan 
-        ? [{a:12000, b:0, t:"房贷利息: A 扣除"}, {a:0, b:12000, t:"房贷利息: B 扣除"}] 
-        : (shared.rent > 0 ? [{a:shared.rent, b:0, t:"住房租金: A 扣除"}, {a:0, b:shared.rent, t:"住房租金: B 扣除"}] : [{a:0, b:0, t:""}]);
+    const housingOpts = shared.loan 
+        ? [{a:12000, b:0, t:"房贷利息: A 扣除"}, {a:0, b:12000, t:"房贷利息: B 扣除"}] 
+        : (shared.rent > 0 ? [{a:shared.rent, b:0, t:"住房租金: A 扣除"}, {a:0, b:shared.rent, t:"住房租金: B 扣除"}] : [{a:0, b:0, t:""}]);
 
-    const disAOpts = shared.disA > 0 ? [{a:shared.disA, b:0, t:"A的大病: A 扣除"}, {a:0, b:shared.disA, t:"A的大病: B 扣除"}] : [{a:0, b:0, t:""}];
-    const disBOpts = shared.disB > 0 ? [{a:shared.disB, b:0, t:"B的大病: A 扣除"}, {a:0, b:shared.disB, t:"B的大病: B 扣除"}] : [{a:0, b:0, t:""}];
+    const disAOpts = shared.disA > 0 ? [{a:shared.disA, b:0, t:"A的大病: A 扣除"}, {a:0, b:shared.disA, t:"A的大病: B 扣除"}] : [{a:0, b:0, t:""}];
+    const disBOpts = shared.disB > 0 ? [{a:shared.disB, b:0, t:"B的大病: A 扣除"}, {a:0, b:shared.disB, t:"B的大病: B 扣除"}] : [{a:0, b:0, t:""}];
 
-    const modes = ['independent', 'combined'];
+    const modes = ['independent', 'combined'];
 
-    for(let modeA of modes) {
-        for(let modeB of modes) {
-            for(let cA of childSteps) {
-                let cB = shared.childTotal - cA;
-                for(let h of housingOpts) {
-                    for(let dA of disAOpts) {
-                        for(let dB of disBOpts) {
-                            
-                            let taxA = 0, bonusTaxA = 0;
-                            let incomeA = pA.salary;
-                            if(modeA === 'independent') {
-                                bonusTaxA = calcBonusTax(pA.bonus).tax;
-                            } else {
-                                incomeA += pA.bonus;
-                            }
-                            let dedA = pA.ins + 60000 + pA.finalDeduct + cA + h.a + dA.a + dB.a;
-                            let resA = calcTax(Math.max(0, incomeA - dedA));
-                            let totalA = resA.tax + bonusTaxA;
+    for(let modeA of modes) {
+        for(let modeB of modes) {
+            for(let cA of childSteps) {
+                let cB = shared.childTotal - cA;
+                for(let h of housingOpts) {
+                    for(let dA of disAOpts) {
+                        for(let dB of disBOpts) {
+                            
+                            let taxA = 0, bonusTaxA = 0;
+                            let incomeA = pA.salary;
+                            if(modeA === 'independent') {
+                                bonusTaxA = calcBonusTax(pA.bonus).tax;
+                            } else {
+                                incomeA += pA.bonus;
+                            }
+                            let dedA = pA.ins + 60000 + pA.fixedDeduct + cA + h.a + dA.a + dB.a;
+                            let resA = calcTax(Math.max(0, incomeA - dedA));
+                            let totalA = resA.tax + bonusTaxA;
 
-                            let taxB = 0, bonusTaxB = 0;
-                            let incomeB = pB.salary;
-                            if(modeB === 'independent') {
-                                bonusTaxB = calcBonusTax(pB.bonus).tax;
-                            } else {
-                                incomeB += pB.bonus;
-                            }
-                            let dedB = pB.ins + 60000 + pB.finalDeduct + cB + h.b + dA.b + dB.b;
-                            let resB = calcTax(Math.max(0, incomeB - dedB));
-                            let totalB = resB.tax + bonusTaxB;
+                            let taxB = 0, bonusTaxB = 0;
+                            let incomeB = pB.salary;
+                            if(modeB === 'independent') {
+                                bonusTaxB = calcBonusTax(pB.bonus).tax;
+                            } else {
+                                incomeB += pB.bonus;
+                            }
+                            let dedB = pB.ins + 60000 + pB.fixedDeduct + cB + h.b + dA.b + dB.b;
+                            let resB = calcTax(Math.max(0, incomeB - dedB));
+                            let totalB = resB.tax + bonusTaxB;
 
-                            let total = totalA + totalB;
-                            if(total > worstTax) worstTax = total;
+                            let total = totalA + totalB;
+                            if(total > worstTax) worstTax = total;
 
-                            if(total < best.tax) {
-                                let recs = [];
-                                if(shared.childTotal > 0) {
-                                    if(cA === shared.childTotal) recs.push("子女教育/照护: 全部 A 扣");
-                                    else if(cA === 0) recs.push("子女教育/照护: 全部 B 扣");
-                                    else recs.push(`子女教育/照护: A扣¥${cA}, B扣¥${cB}`);
-                                }
-                                if(h.t) recs.push(h.t);
-                                if(dA.t) recs.push(dA.t);
-                                if(dB.t) recs.push(dB.t);
+                            if(total < best.tax) {
+                                let recs = [];
+                                if(shared.childTotal > 0) {
+                                    if(cA === shared.childTotal) recs.push("子女教育/照护: 全部 A 扣");
+                                    else if(cA === 0) recs.push("子女教育/照护: 全部 B 扣");
+                                    else recs.push(`子女教育/照护: A扣¥${cA}, B扣¥${cB}`);
+                                }
+                                if(h.t) recs.push(h.t);
+                                if(dA.t) recs.push(dA.t);
+                                if(dB.t) recs.push(dB.t);
 
-                                best = {
-                                    tax: total,
-                                    taxA: totalA,
-                                    rateA: resA.rate,
-                                    modeA: modeA,
-                                    taxB: totalB,
-                                    rateB: resB.rate,
-                                    modeB: modeB,
-                                    recs: recs
-                                };
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+                                best = {
+                                    tax: total,
+                                    taxA: totalA,
+                                    rateA: resA.rate,
+                                    modeA: modeA,
+                                    taxB: totalB,
+                                    rateB: resB.rate,
+                                    modeB: modeB,
+                                    recs: recs
+                                };
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-    document.getElementById('resTotal').innerText = '¥' + fmt(best.tax);
-    document.getElementById('resSave').innerText = '¥' + fmt(worstTax - best.tax);
-    
-    document.getElementById('resTaxA').innerText = '¥' + fmt(best.taxA);
-    document.getElementById('resModeA').innerText = `税率 ${best.rateA}% | ${best.modeA==='independent'?'奖金单独计税':'奖金合并计税'}`;
-    
-    document.getElementById('resTaxB').innerText = '¥' + fmt(best.taxB);
-    document.getElementById('resModeB').innerText = `税率 ${best.rateB}% | ${best.modeB==='independent'?'奖金单独计税':'奖金合并计税'}`;
+    document.getElementById('resTotal').innerText = '¥' + fmt(best.tax);
+    document.getElementById('resSave').innerText = '¥' + fmt(worstTax - best.tax);
+    
+    document.getElementById('resTaxA').innerText = '¥' + fmt(best.taxA);
+    document.getElementById('resModeA').innerText = `税率 ${best.rateA}% | ${best.modeA==='independent'?'奖金单独计税':'奖金合并计税'}`;
+    
+    document.getElementById('resTaxB').innerText = '¥' + fmt(best.taxB);
+    document.getElementById('resModeB').innerText = `税率 ${best.rateB}% | ${best.modeB==='independent'?'奖金单独计税':'奖金合并计税'}`;
 
-    const prepA = getVal('prepaidA');
-    const refA = prepA - best.taxA;
-    const tagA = document.getElementById('refundTagA');
-    if(prepA > 0) {
-        if(refA >= 0) tagA.innerHTML = `<span class="tag tag-green">退税 ¥${fmt(refA)}</span>`;
-        else tagA.innerHTML = `<span class="tag tag-red">补税 ¥${fmt(Math.abs(refA))}</span>`;
-    } else tagA.innerHTML = '';
+    const prepA = getVal('prepaidA');
+    const refA = prepA - best.taxA;
+    const tagA = document.getElementById('refundTagA');
+    if(prepA > 0) {
+        if(refA >= 0) tagA.innerHTML = `<span class="tag tag-green">退税 ¥${fmt(refA)}</span>`;
+        else tagA.innerHTML = `<span class="tag tag-red">补税 ¥${fmt(Math.abs(refA))}</span>`;
+    } else tagA.innerHTML = '';
 
-    const prepB = getVal('prepaidB');
-    const refB = prepB - best.taxB;
-    const tagB = document.getElementById('refundTagB');
-    if(prepB > 0) {
-        if(refB >= 0) tagB.innerHTML = `<span class="tag tag-green">退税 ¥${fmt(refB)}</span>`;
-        else tagB.innerHTML = `<span class="tag tag-red">补税 ¥${fmt(Math.abs(refB))}</span>`;
-    } else tagB.innerHTML = '';
+    const prepB = getVal('prepaidB');
+    const refB = prepB - best.taxB;
+    const tagB = document.getElementById('refundTagB');
+    if(prepB > 0) {
+        if(refB >= 0) tagB.innerHTML = `<span class="tag tag-green">退税 ¥${fmt(refB)}</span>`;
+        else tagB.innerHTML = `<span class="tag tag-red">补税 ¥${fmt(Math.abs(refB))}</span>`;
+    } else tagB.innerHTML = '';
 
-    const list = document.getElementById('recList');
-    list.innerHTML = '';
-    
-    let liA = document.createElement('li');
-    liA.className = 'rec-item';
-    liA.innerHTML = `<span class="check">✓</span> <div>A 年终奖申报: <b>${best.modeA==='independent'?'单独计税':'并入综合所得'}</b></div>`;
-    list.appendChild(liA);
+    const list = document.getElementById('recList');
+    list.innerHTML = '';
+    
+    let liA = document.createElement('li');
+    liA.className = 'rec-item';
+    liA.innerHTML = `<span class="check">✓</span> <div>A 年终奖申报: <b>${best.modeA==='independent'?'单独计税':'并入综合所得'}</b></div>`;
+    list.appendChild(liA);
 
-    let liB = document.createElement('li');
-    liB.className = 'rec-item';
-    liB.innerHTML = `<span class="check">✓</span> <div>B 年终奖申报: <b>${best.modeB==='independent'?'单独计税':'并入综合所得'}</b></div>`;
-    list.appendChild(liB);
+    let liB = document.createElement('li');
+    liB.className = 'rec-item';
+    liB.innerHTML = `<span class="check">✓</span> <div>B 年终奖申报: <b>${best.modeB==='independent'?'单独计税':'并入综合所得'}</b></div>`;
+    list.appendChild(liB);
 
-    best.recs.forEach(r => {
-        let li = document.createElement('li');
-        li.className = 'rec-item';
-        li.innerHTML = `<span class="check">✓</span> ${r}`;
-        list.appendChild(li);
-    });
+    best.recs.forEach(r => {
+        let li = document.createElement('li');
+        li.className = 'rec-item';
+        li.innerHTML = `<span class="check">✓</span> ${r}`;
+        list.appendChild(li);
+    });
 }
 
 document.querySelectorAll('input, select').forEach(el => {
-    el.addEventListener('input', runOptimization);
-    el.addEventListener('change', runOptimization);
+    el.addEventListener('input', runOptimization);
+    el.addEventListener('change', runOptimization);
 });
 
 document.getElementById('autoInsA').addEventListener('change', (e) => {
-    document.getElementById('insuranceA').disabled = e.target.checked;
-    runOptimization();
+    document.getElementById('insuranceA').disabled = e.target.checked;
+    runOptimization();
 });
 document.getElementById('autoInsB').addEventListener('change', (e) => {
-    document.getElementById('insuranceB').disabled = e.target.checked;
-    runOptimization();
+    document.getElementById('insuranceB').disabled = e.target.checked;
+    runOptimization();
 });
 document.getElementById('autoPrepaidA').addEventListener('change', runOptimization);
 document.getElementById('autoPrepaidB').addEventListener('change', runOptimization);
